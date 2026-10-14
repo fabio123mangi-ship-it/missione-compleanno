@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06110b">
+<title>MISSIONE COMPLEANNO</title>
+<style>
+*{box-sizing:border-box}
+:root{--g:#65ff91;--bg:#06110b;--panel:#0c1b12}
+body{margin:0;min-height:100vh;min-height:100dvh;padding:12px;display:flex;justify-content:center;align-items:center;background:radial-gradient(ellipse at top,#10291a,var(--bg) 70%);color:var(--g);font-family:"Courier New",monospace;-webkit-tap-highlight-color:transparent}
+.app{width:100%;max-width:650px;padding:19px;border:1px solid #2d7445;border-radius:16px;background:#06110bf5;box-shadow:0 0 30px #173d2350}
+.top{text-align:center;border-bottom:1px solid #285538;padding-bottom:12px;margin-bottom:18px}
+.symbol{font-size:30px}h1{font-size:21px;letter-spacing:2px}h2{font-size:19px;line-height:1.4}
+p{color:#d4e6d9;line-height:1.6}.muted{color:#a1b6a7;font-size:12px}.status{color:var(--g);font-size:12px;letter-spacing:1px}
+.center{text-align:center}.small{font-size:13px}.hidden{display:none!important}
+label{display:block;margin:14px 0 7px;font-size:13px}
+input{width:100%;min-height:48px;padding:12px;border:1px solid #376c47;border-radius:8px;background:#08150d;color:white;font:inherit;font-size:16px}
+button{width:100%;min-height:48px;margin-top:12px;padding:12px;border:1px solid var(--g);border-radius:8px;background:var(--g);color:#06110b;font:bold 14px "Courier New",monospace;cursor:pointer;touch-action:manipulation}
+button.secondary{background:transparent;color:var(--g)}
+button:active{transform:scale(.98)}
+.box{padding:14px;margin:14px 0;border:1px solid #285538;border-radius:10px;background:var(--panel)}
+.red{color:#ff7777}.green{color:var(--g)}
+.scene-legend{display:flex;justify-content:space-between;gap:8px;margin:8px 0;color:#d4e6d9;font-size:11px}
+.scenes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scene{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border:1px solid #52745b;border-radius:8px;background:linear-gradient(#193b2a 0 72%,#26372b 72% 100%)}
+.scene:before{content:"";position:absolute;left:0;right:0;top:72%;height:3px;background:#7c9b75}
+.window{position:absolute;left:34%;top:8%;width:37%;height:30%;border:3px solid #779781;background:repeating-linear-gradient(90deg,#102b35 0 20%,#31505a 21% 24%)}
+.shelf{position:absolute;left:5%;top:43%;width:27%;height:4px;background:#9a7953;box-shadow:0 20px #9a7953}
+.bottle{position:absolute;left:10%;top:29%;font-size:clamp(12px,4vw,25px)}
+.clock{position:absolute;left:5%;top:7%;font-size:clamp(18px,5vw,31px)}
+.monitor{position:absolute;left:39%;top:40%;width:37%;height:26%;border:3px solid #6d8a74;border-radius:4px;background:#07140d;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:clamp(9px,2.5vw,15px);text-align:center}
+.monitor:after{content:"";position:absolute;left:40%;right:40%;bottom:-10px;height:8px;background:#6d8a74}
+.table{position:absolute;left:25%;top:70%;width:68%;height:6px;background:#9a7953}
+.table:after{content:"";position:absolute;top:5px;left:12%;width:6px;height:30px;background:#9a7953;box-shadow:120px 0 #9a7953}
+.plant{position:absolute;left:5%;top:55%;font-size:clamp(17px,5vw,31px)}
+.folder{position:absolute;left:72%;top:57%;font-size:clamp(16px,4.5vw,27px)}
+.flask{position:absolute;left:43%;top:56%;font-size:clamp(16px,4.5vw,27px)}
+.after .plant,.after .folder,.after .flask{visibility:hidden}
+.hotspot{position:absolute;z-index:5;width:22%;height:22%;min-height:0;margin:0;padding:0;border:2px solid transparent;border-radius:8px;background:transparent;color:transparent}
+.hotspot.found{border-color:var(--g);background:#65ff9120;color:var(--g);font-size:18px}
+.progress-track{height:8px;margin:10px 0;overflow:hidden;border:1px solid #285538;border-radius:8px;background:#0b170e}
+.progress-fill{height:100%;width:0;background:var(--g);transition:width .2s}
+#flightCanvas{display:block;width:100%;aspect-ratio:4/3;border:1px solid #427450;border-radius:10px;background:#b7d8c4;touch-action:manipulation}
+#combatCanvas{display:block;width:100%;aspect-ratio:4/3;border:1px solid #427450;border-radius:10px;background:#17291d;touch-action:manipulation}
+.flight-help{font-size:12px;text-align:center;color:#d4e6d9}
+@media(max-width:380px){body{padding:6px}.app{padding:12px}h1{font-size:18px}h2{font-size:17px}.scenes{gap:5px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top">
+<div class="symbol">▣</div>
+<h1>COMANDO SEGRETO</h1>
+<div class="status">● SISTEMA OPERATIVO</div>
+<p class="muted">ACCESSO RISERVATO · LIVELLO 5</p>
+</header>
+
+<section id="login">
+<h2 class="center">IDENTIFICAZIONE AGENTE</h2>
+<p class="small">Inserire le credenziali per accedere al sistema riservato.</p>
+<form id="loginForm">
+<label for="username">NOME UTENTE</label>
+<input id="username" autocomplete="username" placeholder="Nome agente" required>
+<label for="password">CODICE DI ACCESSO</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="Password segreta" required>
+<button type="submit">ACCEDI AL SISTEMA</button>
+</form>
+<p id="loginError" class="red small hidden">ACCESSO NEGATO. Credenziali non riconosciute.</p>
+</section>
+
+<section id="welcome" class="hidden">
+<p class="status">IDENTITÀ CONFERMATA</p>
+<h2>Benvenuta, agente segreto Mazzara Noemi.</h2>
+<p>Ti è stata assegnata una nuova missione segreta.</p>
+<p class="center">ACCETTI LA MISSIONE?</p>
+<button id="accept">SÌ, ACCETTO LA MISSIONE</button>
+<button id="refuse" class="secondary">NO, RIFIUTO</button>
+<p id="refusal" class="red center hidden">ERRORE: il protocollo non contempla il rifiuto. Agente, riprova.</p>
+</section>
+
+<section id="briefing" class="hidden">
+<p class="status">● MISSIONE AUTORIZZATA</p>
+<h2>Perfetto, agente segreto Mazzara Noemi.</h2>
+<div class="box">
+<p class="muted">NOME IN CODICE</p>
+<h2 class="green">MISSIONE COMPLEANNO</h2>
+<p>Una squadra di potenti cattivoni ha rubato i codici di lancio di un missile sperimentale.</p>
+<p>Il loro piano è togliere la felicità a tutti gli abitanti del pianeta.</p>
+<p>Scopri chi si nasconde dietro questo piano, recupera i codici e salva il mondo!</p>
+</div>
+<p class="center">Il destino del pianeta è nelle tue mani.</p>
+<button id="start">▶ INIZIA LA MISSIONE</button>
+</section>
+
+<section id="call" class="hidden">
+<p class="status">● CHIAMATA IN ARRIVO · COMANDO CENTRALE</p>
+<h2 class="center">☎ COMUNICAZIONE RISERVATA</h2>
+<div class="box">
+<p>«Agente segreto Mazzara Noemi, questo è il suo primo incarico per la Missione Compleanno.</p>
+<p>Deve recarsi sul luogo del furto, investigare sull'accaduto e trovare potenziali indizi.</p>
+<p>Agisca con prudenza. Il futuro del pianeta dipende da lei. Comando centrale, chiudo.»</p>
+</div>
+<button id="closeCall">CHIUDI COMUNICAZIONE</button>
+</section>
+
+<section id="laboratory" class="hidden">
+<p class="status">● OBIETTIVO 01 · LABORATORIO</p>
+<h2 class="center">LABORATORIO SUPER SEGRETISSIMO</h2>
+<p class="small">Confronta le due scene e tocca le 5 differenze nell'immagine di destra.</p>
+<div class="scene-legend"><span>PRIMA DEL FURTO</span><span>DOPO IL FURTO</span></div>
+<div class="scenes">
+<div class="scene">
+<div class="window"></div><div class="shelf"></div><div class="bottle">🧴</div><div class="clock">🕘</div>
+<div class="monitor"><span>●</span><span>SISTEMA OK</span></div><div class="plant">🪴</div><div class="folder">📁</div><div class="flask">🧪</div><div class="table"></div>
+</div>
+<div class="scene after">
+<div class="window"></div><div class="shelf"></div><div class="bottle">🧴</div><div class="clock">🕛</div>
+<div class="monitor"><span>▲</span><span>ALLARME</span></div><div class="plant">🪴</div><div class="folder">📁</div><div class="flask">🧪</div><div class="table"></div>
+<button class="hotspot" data-diff="clock" aria-label="Orologio" style="left:2%;top:4%"></button>
+<button class="hotspot" data-diff="monitor" aria-label="Monitor" style="left:43%;top:39%;width:30%;height:29%"></button>
+<button class="hotspot" data-diff="plant" aria-label="Pianta" style="left:1%;top:53%"></button>
+<button class="hotspot" data-diff="folder" aria-label="Cartella" style="left:69%;top:54%"></button>
+<button class="hotspot" data-diff="flask" aria-label="Provetta" style="left:37%;top:53%"></button>
+</div>
+</div>
+<div class="box">
+<div class="status">INDIZI: <span id="count">0</span> / 5</div>
+<div class="progress-track"><div id="progress" class="progress-fill"></div></div>
+<p id="hint" class="small">Analizza attentamente la scena.</p>
+</div>
+<button id="resetGame" class="secondary">RICOMINCIA L'ANALISI</button>
+</section>
+
+<section id="clear" class="hidden center">
+<div style="font-size:54px">✓</div><h1>CLEAR</h1>
+<p>OTTIMO LAVORO, AGENTE MAZZARA.</p>
+<div class="box"><p>Hai individuato tutti e 5 gli indizi.</p><p class="green">PROVE TRASMESSE AL COMANDO</p></div>
+<button id="nextCall">RICEVI AGGIORNAMENTO DAL COMANDO</button>
+</section>
+
+<section id="call2" class="hidden">
+<p class="status">● COMANDO CENTRALE · NUOVI ORDINI</p>
+<h2 class="center">☎ COMUNICAZIONE RISERVATA</h2>
+<div class="box">
+<p>«Agente Mazzara, abbiamo ricevuto le prove trovate sul luogo del furto.</p>
+<p>Un elicottero sta raggiungendo la sua posizione per scortarla verso il prossimo obiettivo.</p>
+<p>Si prepari al trasferimento. Seguiranno aggiornamenti. Comando centrale, chiudo.»</p>
+</div>
+<button id="beginFlight">RAGGIUNGI L'ELICOTTERO</button>
+</section>
+
+<section id="flight" class="hidden">
+<p class="status">● OBIETTIVO 02 · TRASFERIMENTO AEREO</p>
+<h2 class="center">VOLO VERSO LA ZONA OPERATIVA</h2>
+<p class="small">Tocca il campo di gioco per far salire l'elicottero. Evita gli ostacoli e raggiungi 10 punti.</p>
+<div class="box">
+<div class="status">DISTANZA PERCORSA: <span id="flightScore">0</span> / 10</div>
+<div class="progress-track"><div id="flightProgress" class="progress-fill"></div></div>
+</div>
+<canvas id="flightCanvas" width="600" height="450" aria-label="Gioco dell'elicottero"></canvas>
+<p id="flightMessage" class="flight-help">Premi INIZIA VOLO quando sei pronto.</p>
+<button id="flightStart">INIZIA VOLO</button>
+<button id="flightRetry" class="secondary hidden">RIPROVA IL VOLO</button>
+<button id="flightContinue" class="hidden">PROSEGUI VERSO MOSCA</button>
+</section>
+
+<section id="transfer" class="hidden center">
+<div style="font-size:48px">✈</div>
+<p class="status">● TRASFERIMENTO COMPLETATO</p>
+<h1>TRASFERIMENTO AVVENUTO</h1>
+<div class="box">
+<p class="green">DESTINAZIONE:</p>
+<h2>RUSSIA · MOSCA</h2>
+<p>NASCONDIGLIO DEI MERCENARI BABA JAGA</p>
+<p>L'elicottero è atterrato. La nuova zona operativa è stata raggiunta.</p>
+</div>
+<button id="moscowBriefing">RICEVI NUOVI ORDINI</button>
+</section>
+
+<section id="call3" class="hidden">
+<p class="status">● COMANDO CENTRALE · PRIORITÀ ALTA</p>
+<h2 class="center">☎ COMUNICAZIONE RISERVATA</h2>
+<div class="box">
+<p>«Agente Mazzara, tra gli indizi recuperati in laboratorio abbiamo trovato un foglietto bruciato.</p>
+<p>Quasi tutto il testo è illeggibile, ma sul foglio è rimasto un simbolo collegato ai mercenari della Baba Jaga.</p>
+<p>Un nostro contatto ha individuato il loro nascondiglio a Mosca.</p>
+<p>Il suo obiettivo è introdursi senza farsi notare, neutralizzare la minaccia e catturare il capo per interrogarlo.</p>
+<p>Agisca con prudenza. Comando centrale, chiudo.»</p>
+</div>
+<button id="beginCombat">AVVIA L'INFILTRAZIONE</button>
+</section>
+
+<section id="combat" class="hidden">
+<p class="status">● OBIETTIVO 03 · MOSCA</p>
+<h2 class="center">NASCONDIGLIO BABA JAGA</h2>
+<p class="small">I mercenari si nascondono dietro le barricate. Tocca i bersagli quando compaiono. Completa l'addestramento eliminando 8 bersagli.</p>
+<div class="box">
+<div class="status">BERSAGLI COLPITI: <span id="hitCount">0</span> / 8</div>
+<div class="progress-track"><div id="hitProgress" class="progress-fill"></div></div>
+</div>
+<canvas id="combatCanvas" width="600" height="450" aria-label="Minigioco di infiltrazione"></canvas>
+<p id="combatMessage" class="flight-help">Premi INIZIA INFILTRAZIONE per cominciare.</p>
+<button id="combatStart">INIZIA INFILTRAZIONE</button>
+<button id="combatRetry" class="secondary hidden">RIPROVA</button>
+</section>
+
+<section id="finalClear" class="hidden center">
+<div style="font-size:54px">✓</div><h1>CLEAR</h1>
+<p>OBIETTIVO COMPLETATO, AGENTE MAZZARA.</p>
+<div class="box">
+<p>Il nascondiglio è stato messo in sicurezza.</p>
+<p>Il comando centrale attende il rapporto finale.</p>
+<p class="green">MISSIONE IN CORSO · RAPPORTO IN ATTESA</p>
+</div>
+<p>Fine della versione di prova. Le prossime fasi saranno aggiunte dopo i test.</p>
+</section>
+
+<footer class="center"><p class="muted">MISSIONE COMPLEANNO · TOP SECRET</p></footer>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const screens = ["login","welcome","briefing","call","laboratory","clear","call2","flight","transfer","call3","combat","finalClear"];
+
+function showScreen(id) {
+  stopFlight();
+  stopCombat();
+  screens.forEach(s => $(s).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+$("loginForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  if($("username").value.trim().toLowerCase()==="noemi" && $("password").value==="missione"){
+    $("loginError").classList.add("hidden");
+    showScreen("welcome");
+  } else $("loginError").classList.remove("hidden");
+});
+$("accept").onclick=()=>showScreen("briefing");
+$("refuse").onclick=()=>$("refusal").classList.remove("hidden");
+$("start").onclick=()=>showScreen("call");
+$("closeCall").onclick=()=>showScreen("laboratory");
+
+const found = new Set();
+const diffNames = {
+  clock:"L'orologio segna un'ora diversa.",
+  monitor:"Il monitor segnala un allarme.",
+  plant:"La pianta è scomparsa.",
+  folder:"La cartella è scomparsa.",
+  flask:"La provetta è scomparsa."
+};
+
+document.querySelectorAll(".hotspot").forEach(b=>{
+  b.onclick=()=>{
+    const d=b.dataset.diff;
+    if(found.has(d)){ $("hint").textContent="Indizio già registrato."; return; }
+    found.add(d);
+    b.classList.add("found");
+    b.textContent="✓";
+    $("count").textContent=found.size;
+    $("progress").style.width=(found.size/5*100)+"%";
+    $("hint").textContent=diffNames[d];
+    if(found.size===5) setTimeout(()=>showScreen("clear"),700);
+  };
+});
+
+$("resetGame").onclick=()=>{
+  found.clear();
+  document.querySelectorAll(".hotspot").forEach(b=>{b.classList.remove("found");b.textContent="";});
+  $("count").textContent="0"; $("progress").style.width="0";
+  $("hint").textContent="Analizza attentamente la scena.";
+};
+$("nextCall").onclick=()=>showScreen("call2");
+$("beginFlight").onclick=()=>showScreen("flight");
+$("moscowBriefing").onclick=()=>showScreen("call3");
+$("beginCombat").onclick=()=>showScreen("combat");
+
+/* MINIGIOCO ELICOTTERO */
+const fc=$("flightCanvas"), fx=fc.getContext("2d");
+let flightFrame=0, flightRunning=false, flightWon=false;
+let heli={x:115,y:220,vy:0};
+let obstacles=[], flightScore=0, flightTicks=0;
+
+function drawFlight(){
+  const w=fc.width,h=fc.height;
+  fx.clearRect(0,0,w,h);
+  const sky=fx.createLinearGradient(0,0,0,h);
+  sky.addColorStop(0,"#b8d8c6"); sky.addColorStop(1,"#4c8060");
+  fx.fillStyle=sky;fx.fillRect(0,0,w,h);
+  fx.fillStyle="#71967a";
+  for(let i=0;i<5;i++){
+    const x=((i*155-flightTicks*1.2)%(w+180)+w+180)%(w+180)-90;
+    fx.beginPath();fx.moveTo(x,h);fx.lineTo(x+90,155+(i%2)*35);fx.lineTo(x+180,h);fx.fill();
+  }
+  fx.fillStyle="#314d36";fx.fillRect(0,h-34,w,34);
+  obstacles.forEach(o=>{
+    fx.fillStyle="#263c2b";
+    fx.fillRect(o.x,0,o.width,o.top);
+    fx.fillRect(o.x,o.top+o.gap,o.width,h-o.top-o.gap-34);
+    fx.fillStyle="#63805d";
+    fx.fillRect(o.x-4,o.top-8,o.width+8,8);
+    fx.fillRect(o.x-4,o.top+o.gap,o.width+8,8);
+  });
+  // elicottero disegnato senza immagini esterne
+  fx.save();fx.translate(heli.x,heli.y);
+  fx.fillStyle="#203c27";fx.fillRect(-30,-9,43,18);
+  fx.fillStyle="#385b39";fx.fillRect(-8,-18,24,13);
+  fx.fillStyle="#91c6c4";fx.fillRect(2,-15,11,8);
+  fx.fillStyle="#203c27";fx.fillRect(-43,-2,16,5);
+  fx.fillRect(-40,-8,3,17);
+  fx.fillRect(-5,-24,36,3);
+  fx.fillRect(9,-29,3,8);
+  fx.fillRect(-18,11,3,7);fx.fillRect(12,11,3,7);
+  fx.fillRect(-24,17,42,3);
+  fx.restore();
+  if(!flightRunning && !flightWon){
+    fx.fillStyle="#07150cdd";fx.fillRect(80,160,440,100);
+    fx.fillStyle="#65ff91";fx.textAlign="center";fx.font="bold 24px monospace";
+    fx.fillText("PRONTO AL DECOLLO?",w/2,200);
+    fx.font="16px monospace";fx.fillText("Premi INIZIA VOLO",w/2,230);
+  }
+  if(flightWon){
+    fx.fillStyle="#07150cdd";fx.fillRect(70,165,460,100);
+    fx.fillStyle="#65ff91";fx.textAlign="center";fx.font="bold 28px monospace";
+    fx.fillText("OBIETTIVO RAGGIUNTO",w/2,205);
+    fx.font="18px monospace";fx.fillText("TRASFERIMENTO IN CORSO",w/2,237);
+  }
+}
+
+function flightLoop(){
+  if(!flightRunning)return;
+  flightTicks++;
+  heli.vy+=0.25;
+  heli.y+=heli.vy;
+  if(flightTicks%92===1){
+    const top=45+Math.random()*155;
+    obstacles.push({x:fc.width+15,width:52,top,gap:150,passed:false});
+  }
+  obstacles.forEach(o=>{
+    o.x-=3.2;
+    if(!o.passed && o.x+o.width<heli.x){
+      o.passed=true;flightScore++;
+      $("flightScore").textContent=flightScore;
+      $("flightProgress").style.width=(flightScore/10*100)+"%";
+      if(flightScore>=10){winFlight();return;}
+    }
+    const inX=heli.x+24>o.x && heli.x-28<o.x+o.width;
+    const inY=heli.y-20<o.top || heli.y+20>o.top+o.gap;
+    if(inX&&inY){loseFlight();return;}
+  });
+  obstacles=obstacles.filter(o=>o.x+o.width>0);
+  if(heli.y<15||heli.y>fc.height-50){loseFlight();return;}
+  drawFlight();
+  if(flightRunning)flightFrame=requestAnimationFrame(flightLoop);
+}
+function stopFlight(){flightRunning=false;if(flightFrame)cancelAnimationFrame(flightFrame);}
+function startFlight(){
+  stopFlight();flightWon=false;flightScore=0;flightTicks=0;
+  heli={x:115,y:220,vy:0};obstacles=[];
+  $("flightScore").textContent="0";$("flightProgress").style.width="0";
+  $("flightMessage").textContent="Volo in corso! Tocca per salire.";
+  $("flightStart").classList.add("hidden");$("flightRetry").classList.add("hidden");
+  $("flightContinue").classList.add("hidden");
+  flightRunning=true;drawFlight();flightFrame=requestAnimationFrame(flightLoop);
+}
+function flap(){
+  if(flightRunning){heli.vy=-4.6;drawFlight();}
+}
+function loseFlight(){
+  if(!flightRunning)return;
+  stopFlight();drawFlight();
+  $("flightMessage").textContent="Ostacolo! Riprova: il comando attende.";
+  $("flightRetry").classList.remove("hidden");
+}
+function winFlight(){
+  stopFlight();flightWon=true;drawFlight();
+  $("flightMessage").textContent="Trasferimento riuscito. Zona operativa raggiunta.";
+  $("flightContinue").classList.remove("hidden");
+}
+fc.addEventListener("pointerdown",e=>{if(flightRunning){e.preventDefault();flap();}});
+document.addEventListener("keydown",e=>{
+  if(!$("flight").classList.contains("hidden") && (e.code==="Space"||e.code==="ArrowUp")){
+    e.preventDefault();flap();
+  }
+});
+$("flightStart").onclick=startFlight;
+$("flightRetry").onclick=startFlight;
+$("flightContinue").onclick=()=>showScreen("transfer");
+drawFlight();
+
+/* MINIGIOCO INFILTRAZIONE */
+const cc=$("combatCanvas"), cx=cc.getContext("2d");
+let combatFrame=0,combatRunning=false,combatTicks=0,hits=0,targets=[],lastSpawn=0;
+
+function drawCombat(){
+  const w=cc.width,h=cc.height;
+  cx.clearRect(0,0,w,h);
+  cx.fillStyle="#233e2a";cx.fillRect(0,0,w,h);
+  // sfondo del nascondiglio
+  cx.fillStyle="#101d14";cx.fillRect(0,0,w,115);
+  for(let i=0;i<5;i++){
+    cx.fillStyle=i%2?"#3b5540":"#2c4633";
+    cx.fillRect(i*125+15,25,75,55);
+    cx.fillStyle="#7a967c";cx.fillRect(i*125+25,35,55,4);
+  }
+  // ripari
+  [45,185,335,475].forEach((x,i)=>{
+    cx.fillStyle="#66533b";cx.fillRect(x,270,95,100);
+    cx.fillStyle="#8b7655";cx.fillRect(x-5,265,105,12);
+    cx.fillStyle="#354b36";cx.fillRect(x+12,285,70,12);
+  });
+  // bersagli visibili
+  targets.forEach(t=>{
+    if(!t.active)return;
+    cx.fillStyle="#d9b18a";cx.beginPath();cx.arc(t.x,t.y-17,13,0,Math.PI*2);cx.fill();
+    cx.fillStyle="#273c2b";cx.fillRect(t.x-13,t.y-5,26,38);
+    cx.fillStyle="#65ff91";cx.fillRect(t.x-7,t.y+2,14,3);
+    cx.fillStyle="#18271b";cx.fillRect(t.x-20,t.y+30,40,5);
+  });
+  if(!combatRunning){
+    cx.fillStyle="#07150cdd";cx.fillRect(65,160,470,105);
+    cx.fillStyle="#65ff91";cx.textAlign="center";cx.font="bold 24px monospace";
+    cx.fillText(hits>=8?"AREA SICURA":"PRONTO ALL'INFILTRAZIONE",w/2,205);
+    cx.font="16px monospace";cx.fillText(hits>=8?"OBIETTIVO COMPLETATO":"Tocca INIZIA INFILTRAZIONE",w/2,237);
+  }
+}
+function spawnTarget(){
+  const spots=[90,230,380,520];
+  const available=spots.filter(x=>!targets.some(t=>t.active&&t.x===x));
+  if(!available.length)return;
+  const x=available[Math.floor(Math.random()*available.length)];
+  targets.push({x,y:260+Math.random()*30,active:true,age:0});
+}
+function combatLoop(){
+  if(!combatRunning)return;
+  combatTicks++;
+  if(combatTicks-lastSpawn>48){spawnTarget();lastSpawn=combatTicks;}
+  targets.forEach(t=>{if(t.active){t.age++;if(t.age>100)t.active=false;}});
+  targets=targets.filter(t=>t.active);
+  drawCombat();
+  combatFrame=requestAnimationFrame(combatLoop);
+}
+function stopCombat(){combatRunning=false;if(combatFrame)cancelAnimationFrame(combatFrame);}
+function startCombat(){
+  stopCombat();hits=0;combatTicks=0;lastSpawn=0;targets=[];
+  $("hitCount").textContent="0";$("hitProgress").style.width="0";
+  $("combatMessage").textContent="Bersagli in arrivo. Tocca quelli che compaiono.";
+  $("combatStart").classList.add("hidden");$("combatRetry").classList.add("hidden");
+  combatRunning=true;drawCombat();combatFrame=requestAnimationFrame(combatLoop);
+}
+function shoot(e){
+  if(!combatRunning)return;
+  const r=cc.getBoundingClientRect();
+  const x=(e.clientX-r.left)*cc.width/r.width;
+  const y=(e.clientY-r.top)*cc.height/r.height;
+  for(let i=targets.length-1;i>=0;i--){
+    const t=targets[i];
+    if(t.active&&Math.abs(x-t.x)<32&&y>t.y-35&&y<t.y+40){
+      t.active=false;hits++;
+      $("hitCount").textContent=hits;
+      $("hitProgress").style.width=(hits/8*100)+"%";
+      $("combatMessage").textContent="Bersaglio colpito. Continua!";
+      if(hits>=8){
+        stopCombat();drawCombat();
+        $("combatMessage").textContent="Area sicura. Obiettivo completato!";
+        $("combatRetry").textContent="RIVEDI RISULTATO";
+        $("combatRetry").classList.remove("hidden");
+        $("combatRetry").onclick=()=>showScreen("finalClear");
+      }
+      return;
+    }
+  }
+}
+cc.addEventListener("pointerdown",shoot);
+$("combatStart").onclick=startCombat;
+drawCombat();
+</script>
+</body>
+</html>
