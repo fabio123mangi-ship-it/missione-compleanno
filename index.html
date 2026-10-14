@@ -47,6 +47,16 @@ button:active{transform:scale(.98)}
 #combatCanvas{display:block;width:100%;aspect-ratio:4/3;border:1px solid #427450;border-radius:10px;background:#17291d;touch-action:manipulation}
 .flight-help{font-size:12px;text-align:center;color:#d4e6d9}
 @media(max-width:380px){body{padding:6px}.app{padding:12px}h1{font-size:18px}h2{font-size:17px}.scenes{gap:5px}}
+/* Evita lo zoom accidentale durante i minigiochi */
+html, body {
+  touch-action: manipulation;
+}
+
+canvas, button {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
 </style>
 </head>
 <body>
