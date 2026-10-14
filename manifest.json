@@ -1,0 +1,11 @@
+{
+  "name": "Missione Compleanno",
+  "short_name": "Missione",
+  "description": "Missione segreta dell'Agente Mazzara Noemi",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#06110b",
+  "theme_color": "#06110b",
+  "orientation": "portrait",
+  "lang": "it"
+}
